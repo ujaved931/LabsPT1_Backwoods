@@ -20,8 +20,9 @@ if (config.db.url.startsWith('mock://')) {
       updatedAt: new Date(),
       // Mock bcrypt comparison method
       comparePassword: function(candidatePassword, cb) {
-        // For demo purposes, accept "demo123456" as password
-        const isMatch = candidatePassword === "demo123456"
+        // For demo purposes, accept both "demo123456" for regular login 
+        // and "mock-user-123" for OAuth login (UID from Firebase mock)
+        const isMatch = candidatePassword === "demo123456" || candidatePassword === "mock-user-123"
         cb(null, isMatch)
       }
     }
@@ -52,7 +53,8 @@ if (config.db.url.startsWith('mock://')) {
             Object.assign(this, data)
             this._id = Date.now().toString()
             this.comparePassword = function(candidatePassword, cb) {
-              const isMatch = candidatePassword === "demo123456"
+              // Accept both regular password and OAuth UID
+              const isMatch = candidatePassword === "demo123456" || candidatePassword === "mock-user-123"
               cb(null, isMatch)
             }
           }

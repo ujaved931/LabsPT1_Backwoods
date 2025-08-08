@@ -43,6 +43,38 @@
       To begin the development, run `npm start` or `yarn start`.
       To create a production bundle, use `npm run build` or `yarn build`.
     -->
+    <!-- Mock Google Maps API for development -->
+    <script>
+      // Mock Google Maps API to prevent errors in development
+      window.google = {
+        maps: {
+          places: {
+            Autocomplete: function(inputElement) {
+              this.setFields = function(fields) {}
+              this.addListener = function(event, callback) {
+                return { remove: function() {} }
+              }
+              this.getPlace = function() {
+                return {
+                  geometry: {
+                    location: {
+                      lat: function() { return 40.7128 },
+                      lng: function() { return -74.0060 }
+                    },
+                    viewport: {}
+                  },
+                  formatted_address: "New York, NY, USA"
+                }
+              }
+              return this
+            }
+          },
+          event: {
+            clearInstanceListeners: function(listener) {}
+          }
+        }
+      }
+    </script>
     <script src="https://maps.googleapis.com/maps/api/js?key=%REACT_APP_MAPS_KEY%&libraries=places,geometry"></script>
   </body>
 </html>
