@@ -66,6 +66,15 @@ if (config.db.url.startsWith('mock://')) {
               const user = mockUsers.find(u => u.email === query.email)
               return Promise.resolve(user || null)
             }
+            if (query && query._id) {
+              const user = mockUsers.find(u => u._id === query._id)
+              console.log("Mock findOne by _id:", query._id, "found:", user ? "yes" : "no")
+              return {
+                populate: () => ({
+                  exec: () => Promise.resolve(user || null)
+                })
+              }
+            }
             return Promise.resolve(null)
           }
           
@@ -78,6 +87,9 @@ if (config.db.url.startsWith('mock://')) {
                 if (update.$inc && update.$inc.loginCount) {
                   updatedUser.loginCount = (user.loginCount || 0) + 1
                 }
+                // Ensure _id is preserved correctly for JWT token generation
+                updatedUser._id = user._id
+                console.log("Mock findOneAndUpdate returning user with _id:", updatedUser._id)
                 return {
                   populate: () => ({
                     exec: () => Promise.resolve(updatedUser)

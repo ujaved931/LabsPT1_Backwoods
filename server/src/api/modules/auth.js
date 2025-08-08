@@ -38,6 +38,8 @@ export const register = (req, res) => {
 
 export const login = (req, res) => {
   const { email, password } = req.body
+  console.log("Login attempt for:", email)
+  
   User.findOneAndUpdate(
     { email: email },
     // Update lastLogin, increment loginCount:
@@ -48,25 +50,32 @@ export const login = (req, res) => {
     .populate("trips")
     .exec()
     .then(oldUser => {
+      console.log("User found:", oldUser ? `${oldUser.email} with _id: ${oldUser._id}` : "null")
+      
       if (!oldUser) return res.status(404).send("User does not exist")
       oldUser.comparePassword(password, (err, isMatch) => {
         if (err) {
+          console.error("Password comparison error:", err)
           return res.status(500).send("Error checking use password")
         }
         if (isMatch) {
+          console.log("Password match success, generating token for user _id:", oldUser._id)
           // let token = generateToken(user)
           const token = jwt.sign({ id: oldUser._id }, JWT_SECRET, {
             expiresIn: 86400 // 24 hours
           })
+          console.log("Generated token:", token.substring(0, 20) + "...")
 
           const payload = { user: oldUser, token }
           res.status(200).json(payload)
         } else {
+          console.log("Password mismatch for user:", email)
           return res.status(401).send("Invalid password")
         }
       })
     })
     .catch(err => {
+      console.error("Login error:", err)
       res.status(500).send(err)
     })
 }

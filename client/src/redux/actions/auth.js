@@ -97,7 +97,19 @@ export const addTokenToState = () => dispatch => {
     console.log("ADD TOKEN TO STATE ERROR:", e)
   }
   // If no token, bail out:
-  if (!token) return
+  if (!token) {
+    console.log("No token found in localStorage")
+    return
+  }
+  
+  // Validate token format
+  if (typeof token !== 'string' || token.trim() === '') {
+    console.log("Invalid token format:", token)
+    localStorage.removeItem("token") // Clean up invalid token
+    return
+  }
+  
+  console.log("Adding token to state:", token.substring(0, 20) + "...")
   dispatch({ type: ADD_TOKEN_TO_STATE, payload: token })
   // Use token to check DB for user:
   dispatch(checkDbForUser(token))
@@ -105,11 +117,31 @@ export const addTokenToState = () => dispatch => {
 
 export const checkDbForUser = token => dispatch => {
   dispatch({ type: QUERYING_USER_BY_TOKEN })
-  const { id } = decodeJwt(token)
+  
+  // Add validation for token before decoding
+  if (!token || typeof token !== 'string') {
+    return dispatch({
+      type: QUERYING_USER_BY_TOKEN_ERROR,
+      payload: 'Invalid token: token is null or not a string'
+    })
+  }
+  
+  let decodedToken
+  try {
+    decodedToken = decodeJwt(token)
+  } catch (error) {
+    console.error('JWT decode error:', error)
+    return dispatch({
+      type: QUERYING_USER_BY_TOKEN_ERROR,
+      payload: `Token decode failed: ${error.message}`
+    })
+  }
+  
+  const { id } = decodedToken
   if (!id)
     return dispatch({
       type: QUERYING_USER_BY_TOKEN_ERROR,
-      payload: `Token invalid: ${token}`
+      payload: `Token invalid: missing id in token`
     })
 
   axios
