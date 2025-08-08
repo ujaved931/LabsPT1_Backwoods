@@ -20,8 +20,8 @@ if (config.db.url.startsWith('mock://')) {
       updatedAt: new Date(),
       // Mock bcrypt comparison method
       comparePassword: function(candidatePassword, cb) {
-        // For demo purposes, accept "demo123" as password
-        const isMatch = candidatePassword === "demo123"
+        // For demo purposes, accept "demo123456" as password
+        const isMatch = candidatePassword === "demo123456"
         cb(null, isMatch)
       }
     }
@@ -52,7 +52,7 @@ if (config.db.url.startsWith('mock://')) {
             Object.assign(this, data)
             this._id = Date.now().toString()
             this.comparePassword = function(candidatePassword, cb) {
-              const isMatch = candidatePassword === "demo123"
+              const isMatch = candidatePassword === "demo123456"
               cb(null, isMatch)
             }
           }
