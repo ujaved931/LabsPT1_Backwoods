@@ -1,18 +1,25 @@
-import nodemailer from "nodemailer"
-
-export const transporter = nodemailer.createTransport({
-  service: "gmail",
-  auth: {
-    user: process.env.EMAIL_LOGIN,
-    pass: process.env.EMAIL_PASSWORD
+// Mock nodemailer for development
+const mockTransporter = {
+  sendMail: (options, callback) => {
+    console.log("Mock Email sent:", {
+      from: options.from,
+      to: options.to,
+      subject: options.subject
+    })
+    if (callback) {
+      setTimeout(() => callback(null, { messageId: 'mock-message-id' }), 100)
+    }
+    return Promise.resolve({ messageId: 'mock-message-id' })
   }
-})
+}
+
+export const transporter = mockTransporter
 
 export const getPasswordResetURL = (user, token) =>
   `http://localhost:3000/password/reset/${user._id}/${token}`
 
 export const resetPasswordTemplate = (user, url) => {
-  const from = process.env.EMAIL_LOGIN
+  const from = "demo@backwoods.com"
   const to = user.email
   const subject = "🌻 Backwoods Password Reset 🌻"
   const html = `

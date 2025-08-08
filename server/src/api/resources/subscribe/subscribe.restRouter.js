@@ -2,7 +2,8 @@ import express from "express"
 import * as subscribeController from "./subscribe.controller"
 
 export const subscribeRouter = express.Router()
-const stripe = require("stripe")(process.env.STRIPE_KEY_SERVER_TEST)
+// Remove Stripe dependency and use null for mock
+const stripe = null
 
 subscribeRouter
   .route("/invoices")

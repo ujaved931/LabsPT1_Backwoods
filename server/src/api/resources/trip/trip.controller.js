@@ -2,13 +2,23 @@ import moment from "moment"
 import { Trip } from "./trip.model"
 import { User } from "../user/user.model"
 import { Waypoint } from "../waypoint/waypoint.model"
-import cloudinary from "cloudinary"
 
-cloudinary.config({
-  cloud_name: process.env.CLOUD_NAME,
-  api_key: process.env.CLOUDINARY_KEY,
-  api_secret: process.env.CLOUDINARY_SECRET_KEY
-})
+// Mock Cloudinary configuration - no API needed
+const mockCloudinary = {
+  v2: {
+    uploader: {
+      upload: (image, callback) => {
+        // Mock successful upload with placeholder URL
+        setTimeout(() => {
+          callback(null, {
+            url: `https://via.placeholder.com/800x600?text=Mock+Image+Upload`,
+            public_id: `mock_${Date.now()}`
+          })
+        }, 500)
+      }
+    }
+  }
+}
 
 export const getAllTrips = (req, res) => {
   Trip.find({})
@@ -141,16 +151,14 @@ export const repeatTrip = (req, res) => {
   const tripLength = Date.parse(req.body.end) - Date.parse(req.body.start)
   const currentTime = Date.now()
 
-  const updatedRequest = {
-    ...req,
-    body: {
-      ...req.body,
+  const updatedRequest = Object.assign({}, req, {
+    body: Object.assign({}, req.body, {
       isArchived: false,
       start: currentTime,
       end: currentTime + tripLength,
       waypoints: []
-    }
-  }
+    })
+  })
   delete updatedRequest.body.id
   createTrip(updatedRequest, res)
 }
@@ -160,7 +168,7 @@ export const uploadPics = ({ body, params }, res) => {
   const { image } = body
 
   if (image) {
-    cloudinary.v2.uploader.upload(image, (err, result) => {
+    mockCloudinary.v2.uploader.upload(image, (err, result) => {
       if (err) {
         return res
           .status(500)

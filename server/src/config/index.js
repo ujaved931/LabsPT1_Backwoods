@@ -3,12 +3,12 @@ import merge from "lodash.merge"
 const env = process.env.NODE_ENV
 
 const baseConfig = {
-  port: process.env.PORT || 5000,
+  port: process.env.PORT || 8000,
   secrets: {
-    JWT_SECRET: process.env.JWT_SECRET
+    JWT_SECRET: process.env.JWT_SECRET || "backwoods-mock-jwt-secret-for-dev"
   },
   db: {
-    url: process.env.MONGO_URI
+    url: process.env.MONGO_URI || "mock://localhost/backwoods-mock"
   }
 }
 

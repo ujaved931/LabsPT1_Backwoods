@@ -1,12 +1,32 @@
 import React, { Component } from "react"
 import { connect } from "react-redux"
-import { CardElement, injectStripe } from "react-stripe-elements"
 import PropTypes from "prop-types"
 
 import * as s from "../../styles/CheckoutForm.styles"
 import { subscribe } from "../../redux/actions/billing"
 import { UserPropTypes } from "../propTypes"
 import { Input, Button } from "../../styles/theme/styledComponents"
+
+// Mock Card Element
+const MockCardElement = ({ onChange, onReady }) => {
+  React.useEffect(() => {
+    if (onReady) {
+      onReady({ focus: () => {} })
+    }
+  }, [onReady])
+
+  return (
+    <div className="mock-card-element" style={{
+      border: '1px solid #ccc',
+      padding: '10px',
+      borderRadius: '4px',
+      backgroundColor: '#f9f9f9',
+      color: '#666'
+    }}>
+      [Mock Card Input - Demo Mode]
+    </div>
+  )
+}
 
 class CheckoutForm extends Component {
   state = {
@@ -32,10 +52,11 @@ class CheckoutForm extends Component {
         country
       }
     }
+    // Mock subscription without Stripe
     this.props.subscribe({
       id: this.props.user.id,
       owner,
-      stripe: this.props.stripe
+      mock: true // Flag to indicate this is a mock subscription
     })
   }
 
@@ -44,7 +65,7 @@ class CheckoutForm extends Component {
   }
 
   handleChangeOwnerInfo = e => {
-    this.setState({ [e.target.id]: [e.target.value] })
+    this.setState({ [e.target.id]: e.target.value })
   }
 
   render() {
@@ -53,9 +74,9 @@ class CheckoutForm extends Component {
     return (
       <s.CheckoutFormStyles>
         <div className="stripe-card-input">
-          <CardElement
+          <MockCardElement
             onChange={this.handleChangeCard}
-            onReady={el => el.focus()}
+            onReady={el => el && el.focus && el.focus()}
           />
         </div>
         <Input
@@ -110,7 +131,7 @@ class CheckoutForm extends Component {
           onChange={this.handleChangeOwnerInfo}
         />
         <Button className="input-button" onClick={this.submit}>
-          Subscribe Now
+          Subscribe Now (Demo Mode)
         </Button>
       </s.CheckoutFormStyles>
     )
@@ -118,19 +139,14 @@ class CheckoutForm extends Component {
 }
 
 CheckoutForm.propTypes = {
-  stripe: PropTypes.object,
   subscribe: PropTypes.func.isRequired,
   user: UserPropTypes
 }
 
 const mapStateToProps = ({ auth: { user } }) => ({ user })
 
-// We have to wrap connect in `injectStripe` to avoid bugs where shouldComponentUpdate
-// interferes with connect's own shouldComponent update.
-// See https://github.com/stripe/react-stripe-elements#troubleshooting
-export default injectStripe(
-  connect(
-    mapStateToProps,
-    { subscribe }
-  )(CheckoutForm)
-)
+// Remove injectStripe wrapper for mock version
+export default connect(
+  mapStateToProps,
+  { subscribe }
+)(CheckoutForm)

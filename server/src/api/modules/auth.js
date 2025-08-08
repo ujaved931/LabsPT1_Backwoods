@@ -5,11 +5,15 @@ import { User } from "../resources/user/user.model"
 const JWT_SECRET = config.secrets.JWT_SECRET
 
 export const register = (req, res) => {
-  const { email, password, ...rest } = req.body
+  const { email, password } = req.body
+  const rest = Object.assign({}, req.body)
+  delete rest.email
+  delete rest.password
+  
   User.findOne({ email: email })
     .then(existingUser => {
       if (existingUser) return res.status(404).send("Email already exists")
-      let user = new User({ email, password, ...rest })
+      let user = new User(Object.assign({ email, password }, rest))
       const token = jwt.sign({ id: user._id }, JWT_SECRET, {
         expiresIn: 86400 // 24 hours
       })
