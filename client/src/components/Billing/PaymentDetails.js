@@ -1,5 +1,4 @@
 import React, { Component } from "react"
-import { Elements } from "react-stripe-elements"
 import { connect } from "react-redux"
 import styled from "styled-components"
 import PropTypes from "prop-types"
@@ -12,6 +11,11 @@ import CheckoutForm from "../forms/CheckoutForm"
 import Pending from "./Pending"
 import StripeProvider from "./StripeProvider"
 import { media } from "../../styles/theme/mixins"
+
+// Mock Elements component to replace react-stripe-elements
+const MockElements = ({ children }) => (
+  <div className="mock-elements">{children}</div>
+)
 
 const PaymentContainer = styled.div`
   display: flex;
@@ -92,9 +96,9 @@ class PaymentDetails extends Component {
           </div>
         </div>
         <StripeProvider>
-          <Elements>
+          <MockElements>
             <CheckoutForm />
-          </Elements>
+          </MockElements>
         </StripeProvider>
         {this.props.pending && <Pending />}
       </PaymentContainer>
