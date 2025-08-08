@@ -1,7 +1,7 @@
 // GENERAL
 export const APP_NAME = "Backwoods Tracker"
 export const CLIENT_URI = "http://localhost:3000"
-export const SERVER_URI = "http://localhost:8000"
+export const SERVER_URI = "http://localhost:8000/api"
 export const MAPS_KEY = "mock-maps-key"
 
 // STRIPE - Mock values
