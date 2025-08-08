@@ -1,18 +1,18 @@
 // GENERAL
-export const APP_NAME = process.env.REACT_APP_NAME
-export const CLIENT_URI = process.env.REACT_APP_CLIENT_URI
-export const SERVER_URI = process.env.REACT_APP_SERVER_URI
-export const MAPS_KEY = process.env.REACT_APP_MAPS_KEY
+export const APP_NAME = "Backwoods Tracker"
+export const CLIENT_URI = "http://localhost:3000"
+export const SERVER_URI = "http://localhost:8000/api"
+export const MAPS_KEY = "mock-maps-key"
 
-// STRIPE
-export const STRIPE_KEY = process.env.REACT_APP_STRIPE_KEY
-export const STRIPE_KEY_SERVER = process.env.REACT_APP_STRIPE_KEY_SERVER
-export const STRIPE_PLAN_ID_TEST = process.env.REACT_APP_STRIPE_PLAN_ID_TEST
+// STRIPE - Mock values
+export const STRIPE_KEY = "pk_test_mock_stripe_key"
+export const STRIPE_KEY_SERVER = "sk_test_mock_stripe_key" 
+export const STRIPE_PLAN_ID_TEST = "plan_mock_test_id"
 
-// OAUTH
-export const FB_APP_ID = process.env.REACT_APP_FB_APP_ID
+// OAUTH - Mock values
+export const FB_APP_ID = "mock_facebook_app_id"
 export const FirebaseConfig = {
-  apiKey: process.env.REACT_APP_FIREBASE_API_KEY,
-  authDomain: process.env.REACT_APP_FIREBASE_AUTH_DOMAIN,
-  databaseURL: process.env.REACT_APP_FIREBASE_DB_URL
+  apiKey: "mock-api-key",
+  authDomain: "mock-auth-domain",
+  databaseURL: "mock-db-url"
 }

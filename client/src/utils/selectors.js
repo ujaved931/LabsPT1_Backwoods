@@ -29,9 +29,9 @@ export const getAllButDeleted = (state, id) =>
  * Takes a user object from the server & returns an object with
  * an `id` instead of an `_id` property
  **/
-export const normalizeUser = ({ ...rest }) => ({
-  ...rest
-  // id: _id
+export const normalizeUser = ({ _id, ...rest }) => ({
+  ...rest,
+  id: _id
 })
 
 /**

@@ -5,11 +5,15 @@ import { User } from "../resources/user/user.model"
 const JWT_SECRET = config.secrets.JWT_SECRET
 
 export const register = (req, res) => {
-  const { email, password, ...rest } = req.body
+  const { email, password } = req.body
+  const rest = Object.assign({}, req.body)
+  delete rest.email
+  delete rest.password
+  
   User.findOne({ email: email })
     .then(existingUser => {
       if (existingUser) return res.status(404).send("Email already exists")
-      let user = new User({ email, password, ...rest })
+      let user = new User(Object.assign({ email, password }, rest))
       const token = jwt.sign({ id: user._id }, JWT_SECRET, {
         expiresIn: 86400 // 24 hours
       })
@@ -34,6 +38,8 @@ export const register = (req, res) => {
 
 export const login = (req, res) => {
   const { email, password } = req.body
+  console.log("Login attempt for:", email)
+  
   User.findOneAndUpdate(
     { email: email },
     // Update lastLogin, increment loginCount:
@@ -44,25 +50,32 @@ export const login = (req, res) => {
     .populate("trips")
     .exec()
     .then(oldUser => {
+      console.log("User found:", oldUser ? `${oldUser.email} with _id: ${oldUser._id}` : "null")
+      
       if (!oldUser) return res.status(404).send("User does not exist")
       oldUser.comparePassword(password, (err, isMatch) => {
         if (err) {
+          console.error("Password comparison error:", err)
           return res.status(500).send("Error checking use password")
         }
         if (isMatch) {
+          console.log("Password match success, generating token for user _id:", oldUser._id)
           // let token = generateToken(user)
           const token = jwt.sign({ id: oldUser._id }, JWT_SECRET, {
             expiresIn: 86400 // 24 hours
           })
+          console.log("Generated token:", token.substring(0, 20) + "...")
 
           const payload = { user: oldUser, token }
           res.status(200).json(payload)
         } else {
+          console.log("Password mismatch for user:", email)
           return res.status(401).send("Invalid password")
         }
       })
     })
     .catch(err => {
+      console.error("Login error:", err)
       res.status(500).send(err)
     })
 }

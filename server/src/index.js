@@ -1,3 +1,6 @@
+// Set up mocks before any other imports
+import "./mockSetup"
+
 import { createServer } from "http"
 import { connect } from "./db"
 import config from "./config"

@@ -1,9 +1,10 @@
 export const config = {
-  port: process.env.PORT,
+  port: process.env.PORT || 8000,
   db: {
-    url: process.env.MONGO_URI
+    url: process.env.MONGO_URI || "mongodb://localhost/backwoods-mock"
   },
+  // Remove Stripe dependency for mock version
   stripe: {
-    instance: require("stripe")(process.env.STRIPE_KEY_SERVER_PROD)
+    instance: null // Mock stripe instance
   }
 }
